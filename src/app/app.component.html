@@ -1,1 +1,13 @@
-<router-outlet />
+<div class="container">
+  <h1>Configuration</h1>
+  <app-notification/>
+
+  <hr>
+
+  <h1>Page</h1>
+  <router-outlet/>
+  <div class="d-flex gap-2">
+    <input type="text" class="form-control" [(ngModel)]="targetSlug" (keydown.enter)="navigate()">
+    <button class="btn btn-primary" (click)="navigate()">Navigate</button>
+  </div>
+</div>

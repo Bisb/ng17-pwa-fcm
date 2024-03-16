@@ -1,32 +1,27 @@
-import { Component, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { AngularFireMessaging } from '@angular/fire/compat/messaging';
 
 @Component({
   selector: 'app-notification',
   standalone: true,
   imports: [],
   template: `
-    <h1>{{ slug }}</h1>
-    <button (click)="onRequestPermission()">request permission</button>
-    <button (click)="onNewNotification()">notification</button>
+    <div class="d-flex flex-column gap-2">
+      <button class="btn btn-primary" (click)="onRequestFirebasePermission()">request firebase token</button>
+    </div>
   `,
-  styles: ``,
 })
-export class NotificationComponent {
-  activatedRoute = inject(ActivatedRoute);
-
-  slug = 'Nope';
+export class NotificationComponent implements OnInit {
+  afMessaging = inject(AngularFireMessaging);
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(params => this.slug = params['slug']);
+    this.afMessaging.messages.subscribe(payload => console.log(payload));
   }
 
-  onNewNotification() {
-    new Notification('Test', {'body': 'was sup', icon: '/assets/icons/icon-512x512.png'});
-  }
-
-  async onRequestPermission() {
-    const permission = await Notification.requestPermission().then();
-    console.log(permission);
+  onRequestFirebasePermission() {
+    this.afMessaging.requestToken.subscribe({
+      next: value => console.log(value),
+      error: err => console.error(err),
+    });
   }
 }

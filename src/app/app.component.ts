@@ -1,27 +1,33 @@
-import { Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
-import { SwPush } from '@angular/service-worker';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
+import { NotificationComponent } from './notification.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NotificationComponent, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  push = inject(SwPush);
-  aRoute = inject(ActivatedRoute);
+export class AppComponent implements OnInit {
+  SwUpdate = inject(SwUpdate);
 
-  ngOnInit() {
-    const slug = this.aRoute.snapshot.params['slug'];
-    console.log(slug)
+  router = inject(Router);
+  targetSlug = '';
 
-    Notification.requestPermission(permission => console.log(permission))
-      .then();
-    this.push.subscription.subscribe(v => console.log(v))
-    this.push.messages.subscribe(res => console.log(res))
+  async ngOnInit() {
+    if (this.SwUpdate.isEnabled) {
+      setInterval(() => this.SwUpdate.checkForUpdate().then(updateAvailable => {
+        if (updateAvailable) {
+          console.log('New version available');
+        }
+      }), 3000);
+    }
   }
 
-
+  navigate() {
+    this.router.navigate([this.targetSlug]).then();
+  }
 }
