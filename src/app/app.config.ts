@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
@@ -12,12 +12,12 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideServiceWorker('custom-sw.js', {
-      enabled: true,
+      enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
     {
       provide: SERVICE_WORKER,
-      useFactory: async () => await navigator.serviceWorker.getRegistration('./ngsw-worker.js'),
+      useFactory: async () => await navigator.serviceWorker.getRegistration('./custom-sw.js'),
     },
     {provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig},
     importProvidersFrom(provideFirebaseApp(() => initializeApp(environment.firebaseConfig))),
