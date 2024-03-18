@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { NotificationComponent } from './notification.component';
+import { PageComponent } from './page.component';
 
 export const routes: Routes = [
-  {path: ':slug', component: NotificationComponent},
+  {path: ':slug', component: PageComponent},
 ];
